@@ -2,7 +2,7 @@
 
 # AudD — Music Recognition API
 
-Identify songs from short audio clips, hours-long broadcasts, and live audio streams. One HTTP POST per call; SDKs available for 11 languages if you want them.
+Identify songs from short audio clips, hours-long broadcasts, and live audio streams.
 
 [**Get an API token**](https://dashboard.audd.io/) · [**Full docs**](https://docs.audd.io/) · [Support](mailto:api@audd.io)
 
@@ -43,14 +43,12 @@ Identify a single song from a short audio clip — works like Shazam.
 | Parameter | Required | Description |
 |---|---|---|
 | `api_token` | ✅ | Your auth token from the [Dashboard](https://dashboard.audd.io/) |
-| `url` | one of `url`/`file` | URL of the audio file to recognize |
-| `file` | one of `url`/`file` | Audio file via `multipart/form-data` |
+| `url` | one of `url` / `file` | URL of the audio file to recognize |
+| `file` | one of `url` / `file` | Audio file via `multipart/form-data` |
 | `return` | | Comma-separated metadata providers: `apple_music`, `spotify`, `deezer`, `napster`, `musicbrainz`. AudD identifies the song from your audio and, if matched, attaches metadata from each requested provider. |
 | `market` | | Country code for Apple Music / Spotify links (default: `us`) |
 
-`url` is faster and more reliable than uploading the file — AudD downloads it server-side. Use `file` for local audio that isn't reachable online.
-
-### Code examples
+### From a URL
 
 Each language tab shows the raw HTTP form (no SDK), then the official SDK form for the same call.
 
@@ -102,7 +100,7 @@ result = audd.recognize(
 )
 print(f"{result.artist} — {result.title}")
 print(result.apple_music.url)         # direct Apple Music link
-print(result.song_link)               # AudD's short link, works without a provider
+print(result.spotify.uri)              # spotify:track:...
 ```
 
 </details>
@@ -138,14 +136,13 @@ npm install @audd/sdk
 import { AudD } from "@audd/sdk";
 
 const audd = new AudD("your-api-token");
-const song = await audd.recognize({
-  url: "https://audd.tech/example.mp3",
+const song = await audd.recognize("https://audd.tech/example.mp3", {
   return: ["apple_music", "spotify"],
 });
 if (song) {
   console.log(`${song.artist} — ${song.title}`);
-  console.log(song.appleMusic?.url);    // direct Apple Music link
-  console.log(song.songLink);           // AudD's short link
+  console.log(song.appleMusic?.url);
+  console.log(song.spotify?.uri);
 }
 ```
 
@@ -194,16 +191,18 @@ go get github.com/AudDMusic/audd-go
 ```
 
 ```go
-import "github.com/AudDMusic/audd-go"
+import audd "github.com/AudDMusic/audd-go"
 
 client := audd.NewClient("your-api-token")
-result, err := client.Recognize(audd.RecognizeOptions{
-    URL:    "https://audd.tech/example.mp3",
+defer client.Close()
+
+result, err := client.Recognize("https://audd.tech/example.mp3", &audd.RecognizeOptions{
     Return: []string{"apple_music", "spotify"},
 })
 if err != nil { log.Fatal(err) }
 fmt.Printf("%s — %s\n", result.Artist, result.Title)
-fmt.Println(result.AppleMusic.URL)    // direct Apple Music link
+fmt.Println("Apple Music:", result.AppleMusic.URL)
+fmt.Println("Spotify URI:", result.Spotify.URI)
 ```
 
 </details>
@@ -240,15 +239,14 @@ cargo add audd
 use audd::AudD;
 
 let audd = AudD::new("your-api-token");
-let providers = ["apple_music".into(), "spotify".into()];
-if let Some(r) = audd
-    .recognize_with("https://audd.tech/example.mp3", Some(&providers), None, None)
-    .await?
-{
-    println!("{} — {}", r.artist, r.title);
-    if let Some(am) = r.apple_music.as_ref() {
-        println!("{}", am.url.as_deref().unwrap_or(""));
-    }
+let return_ = ["apple_music".into(), "spotify".into()];
+let Some(r) = audd
+    .recognize_with("https://audd.tech/example.mp3", Some(&return_), None, None)
+    .await? else { return Ok(()) };
+
+println!("{} — {}", r.artist, r.title);
+if let Some(am) = r.apple_music.as_ref() {
+    println!("Apple Music: {}", am.url.as_deref().unwrap_or(""));
 }
 ```
 
@@ -297,6 +295,7 @@ $result = $audd->recognize(
 );
 echo "{$result->artist} — {$result->title}\n";
 echo $result->apple_music->url, "\n";
+echo $result->spotify->uri, "\n";
 ```
 
 </details>
@@ -328,11 +327,13 @@ import AudD
 
 let audd = try AudD(apiToken: "your-api-token")
 guard let result = try await audd.recognize(
-    url: "https://audd.tech/example.mp3",
+    "https://audd.tech/example.mp3",
     return: ["apple_music", "spotify"]
 ) else { return }
-print("\(result.artist) — \(result.title)")
+
+print("\(result.artist ?? "?") — \(result.title ?? "?")")
 print(result.appleMusic?.url ?? "")
+print(result.spotify?.uri ?? "")
 ```
 
 </details>
@@ -363,12 +364,13 @@ import io.audd.AudD
 
 val audd = AudD("your-api-token")
 val result = audd.recognize(
-    url = "https://audd.tech/example.mp3",
+    "https://audd.tech/example.mp3",
     returnExtras = listOf("apple_music", "spotify"),
 )
 result?.let {
     println("${it.artist} — ${it.title}")
     println(it.appleMusic?.get("url"))
+    println(it.spotify?.get("uri"))
 }
 ```
 
@@ -401,10 +403,12 @@ using AudD;
 
 await using var audd = new AudD.AudD("your-api-token");
 var result = await audd.RecognizeAsync(
-    url: "https://audd.tech/example.mp3",
+    "https://audd.tech/example.mp3",
     @return: new[] { "apple_music", "spotify" });
+
 Console.WriteLine($"{result?.Artist} — {result?.Title}");
 Console.WriteLine(result?.AppleMusic?.Url);
+Console.WriteLine(result?.Spotify?.Uri);
 ```
 
 </details>
@@ -433,17 +437,18 @@ With the [audd-java](https://github.com/AudDMusic/audd-java) SDK ([docs](https:/
 
 ```java
 import io.audd.AudD;
-import io.audd.Recognize;
+import io.audd.RecognizeOptions;
 
 var audd = new AudD("your-api-token");
 var r = audd.recognize(
-    Recognize.builder()
-        .url("https://audd.tech/example.mp3")
+    "https://audd.tech/example.mp3",
+    RecognizeOptions.builder()
         .returnMetadata("apple_music", "spotify")
         .build()
 );
 System.out.println(r.artist() + " — " + r.title());
 if (r.appleMusic() != null) System.out.println(r.appleMusic().url());
+if (r.spotify()    != null) System.out.println(r.spotify().uri());
 ```
 
 </details>
@@ -478,10 +483,12 @@ const char *want[] = { "apple_music", "spotify", NULL };
 audd_recognize_options_t opts = { .return_metadata = want };
 
 audd_recognition_t *r = NULL;
-if (audd_recognize_url(client, "https://audd.tech/example.mp3", &opts, &r) == AUDD_OK && r) {
+if (audd_recognize(client, "https://audd.tech/example.mp3", &opts, &r) == AUDD_OK && r) {
     printf("%s — %s\n", audd_recognition_artist(r), audd_recognition_title(r));
     const audd_apple_music_t *am = audd_recognition_apple_music(r);
-    if (am) printf("%s\n", audd_apple_music_get_url(am));
+    const audd_spotify_t     *sp = audd_recognition_spotify(r);
+    if (am) printf("Apple Music: %s\n", audd_apple_music_get_url(am));
+    if (sp) printf("Spotify URI: %s\n", audd_spotify_get_uri(sp));
     audd_recognition_free(r);
 }
 audd_client_free(client);
@@ -520,15 +527,16 @@ opts.return_metadata = {"apple_music", "spotify"};
 
 if (auto result = client.recognize("https://audd.tech/example.mp3", opts)) {
     std::cout << result->artist << " — " << result->title << "\n";
-    if (result->apple_music) std::cout << result->apple_music->url << "\n";
+    if (result->apple_music) std::cout << "Apple Music: " << result->apple_music->url << "\n";
+    if (result->spotify)     std::cout << "Spotify URI: " << result->spotify->uri << "\n";
 }
 ```
 
 </details>
 
-### File upload variant
+### From a local file
 
-Use `file=@path` (cURL) or `multipart/form-data` (any HTTP client) when the audio is local and not reachable via URL:
+Same call, just point at a local path. SDKs that auto-detect treat strings as URL-or-path; SDKs that take an explicit `Source` accept a file variant.
 
 <details>
 <summary><strong>cURL</strong></summary>
@@ -545,17 +553,29 @@ curl https://api.audd.io/ \
 <details>
 <summary><strong>Python</strong></summary>
 
+HTTP, no SDK:
+
 ```python
+import requests
+
 with open("audio.mp3", "rb") as f:
     r = requests.post("https://api.audd.io/",
         data={"return": "apple_music,spotify", "api_token": "your-api-token"},
-        files={"file": f}).json()
+        files={"file": f},
+    ).json()
+
+if r["status"] == "success" and r["result"]:
+    s = r["result"]
+    print(f"{s['artist']} — {s['title']}")
+    print(s["apple_music"]["url"])
 ```
 
-With the SDK: pass a path or a file-like to the same `recognize()` call.
+With the SDK — same `recognize()` call, pass a path:
 
 ```python
 result = audd.recognize("audio.mp3", return_=["apple_music", "spotify"])
+print(f"{result.artist} — {result.title}")
+print(result.apple_music.url)
 ```
 
 </details>
@@ -563,22 +583,358 @@ result = audd.recognize("audio.mp3", return_=["apple_music", "spotify"])
 <details>
 <summary><strong>Node / TypeScript</strong></summary>
 
+HTTP, no SDK:
+
 ```typescript
+import { readFileSync } from "node:fs";
+
 const form = new FormData();
-form.append("file", new Blob([fs.readFileSync("audio.mp3")]));
+form.append("file", new Blob([readFileSync("audio.mp3")]));
 form.append("return", "apple_music,spotify");
 form.append("api_token", "your-api-token");
 
-await fetch("https://api.audd.io/", { method: "POST", body: form });
+const res = await fetch("https://api.audd.io/", { method: "POST", body: form });
+const { status, result } = await res.json();
+if (status === "success" && result) {
+  console.log(`${result.artist} — ${result.title}`);
+  console.log(result.apple_music.url);
+}
 ```
 
 With the SDK:
 
 ```typescript
-const song = await audd.recognize({
-  file: fs.createReadStream("audio.mp3"),
+const song = await audd.recognize("./audio.mp3", {
   return: ["apple_music", "spotify"],
 });
+if (song) console.log(`${song.artist} — ${song.title}`, song.appleMusic?.url);
+```
+
+</details>
+
+<details>
+<summary><strong>Go</strong></summary>
+
+HTTP, no SDK:
+
+```go
+import (
+    "bytes"
+    "io"
+    "mime/multipart"
+    "net/http"
+    "os"
+)
+
+f, _ := os.Open("audio.mp3")
+defer f.Close()
+
+var buf bytes.Buffer
+w := multipart.NewWriter(&buf)
+fw, _ := w.CreateFormFile("file", "audio.mp3")
+io.Copy(fw, f)
+w.WriteField("return", "apple_music,spotify")
+w.WriteField("api_token", "your-api-token")
+w.Close()
+
+resp, _ := http.Post("https://api.audd.io/", w.FormDataContentType(), &buf)
+defer resp.Body.Close()
+// parse resp.Body as JSON, same shape as the URL example
+```
+
+With the SDK — same call, pass a path:
+
+```go
+result, _ := client.Recognize("/path/to/audio.mp3", &audd.RecognizeOptions{
+    Return: []string{"apple_music", "spotify"},
+})
+fmt.Printf("%s — %s\n%s\n", result.Artist, result.Title, result.AppleMusic.URL)
+```
+
+</details>
+
+<details>
+<summary><strong>Rust</strong></summary>
+
+HTTP, no SDK (`reqwest` multipart):
+
+```rust
+let part = reqwest::multipart::Part::file("audio.mp3").await?;
+let form = reqwest::multipart::Form::new()
+    .part("file", part)
+    .text("return", "apple_music,spotify")
+    .text("api_token", "your-api-token");
+
+let r: serde_json::Value = reqwest::Client::new()
+    .post("https://api.audd.io/")
+    .multipart(form)
+    .send().await?
+    .json().await?;
+```
+
+With the SDK — `recognize_with` accepts `Into<Source>`, so a path string works:
+
+```rust
+let return_ = ["apple_music".into(), "spotify".into()];
+if let Some(r) = audd
+    .recognize_with("audio.mp3", Some(&return_), None, None)
+    .await?
+{
+    println!("{} — {}", r.artist, r.title);
+}
+```
+
+</details>
+
+<details>
+<summary><strong>PHP</strong></summary>
+
+HTTP, no SDK (using cURL):
+
+```php
+$ch = curl_init('https://api.audd.io/');
+curl_setopt_array($ch, [
+    CURLOPT_RETURNTRANSFER => true,
+    CURLOPT_POST => true,
+    CURLOPT_POSTFIELDS => [
+        'file' => new CURLFile('audio.mp3'),
+        'return' => 'apple_music,spotify',
+        'api_token' => 'your-api-token',
+    ],
+]);
+$r = json_decode(curl_exec($ch), true);
+curl_close($ch);
+
+if ($r['status'] === 'success' && $r['result']) {
+    echo "{$r['result']['artist']} — {$r['result']['title']}\n";
+    echo $r['result']['apple_music']['url'] . "\n";
+}
+```
+
+With the SDK — same call, pass a path:
+
+```php
+$result = $audd->recognize('audio.mp3', return_: ['apple_music', 'spotify']);
+echo "{$result->artist} — {$result->title}\n";
+echo $result->apple_music->url, "\n";
+```
+
+</details>
+
+<details>
+<summary><strong>Swift</strong></summary>
+
+HTTP, no SDK — manual multipart with `URLSession`:
+
+```swift
+let boundary = UUID().uuidString
+let crlf = "\r\n"
+let fileData = try Data(contentsOf: URL(fileURLWithPath: "audio.mp3"))
+
+var body = Data()
+body.append("--\(boundary)\(crlf)Content-Disposition: form-data; name=\"file\"; filename=\"audio.mp3\"\(crlf)Content-Type: audio/mpeg\(crlf)\(crlf)".data(using: .utf8)!)
+body.append(fileData)
+body.append("\(crlf)--\(boundary)\(crlf)Content-Disposition: form-data; name=\"return\"\(crlf)\(crlf)apple_music,spotify\(crlf)--\(boundary)\(crlf)Content-Disposition: form-data; name=\"api_token\"\(crlf)\(crlf)your-api-token\(crlf)--\(boundary)--\(crlf)".data(using: .utf8)!)
+
+var req = URLRequest(url: URL(string: "https://api.audd.io/")!)
+req.httpMethod = "POST"
+req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "Content-Type")
+
+let (data, _) = try await URLSession.shared.upload(for: req, from: body)
+```
+
+With the SDK — pass a `.file(URL)`:
+
+```swift
+let file = URL(fileURLWithPath: "audio.mp3")
+guard let result = try await audd.recognize(
+    .file(file),
+    return: ["apple_music", "spotify"]
+) else { return }
+
+print("\(result.artist ?? "?") — \(result.title ?? "?")")
+print(result.appleMusic?.url ?? "")
+```
+
+</details>
+
+<details>
+<summary><strong>Kotlin</strong></summary>
+
+HTTP, no SDK (OkHttp):
+
+```kotlin
+val body = MultipartBody.Builder()
+    .setType(MultipartBody.FORM)
+    .addFormDataPart(
+        "file", "audio.mp3",
+        File("audio.mp3").asRequestBody("audio/mpeg".toMediaType())
+    )
+    .addFormDataPart("return", "apple_music,spotify")
+    .addFormDataPart("api_token", "your-api-token")
+    .build()
+
+val response = OkHttpClient().newCall(
+    Request.Builder().url("https://api.audd.io/").post(body).build()
+).execute()
+println(response.body?.string())
+```
+
+With the SDK — pass a `Source.FilePath`:
+
+```kotlin
+import io.audd.Source
+
+val result = audd.recognize(
+    Source.FilePath(File("audio.mp3")),
+    returnExtras = listOf("apple_music", "spotify"),
+)
+result?.let { println("${it.artist} — ${it.title} ${it.appleMusic?.get("url")}") }
+```
+
+</details>
+
+<details>
+<summary><strong>C# / .NET</strong></summary>
+
+HTTP, no SDK:
+
+```csharp
+using var http = new HttpClient();
+using var form = new MultipartFormDataContent();
+form.Add(new StreamContent(File.OpenRead("audio.mp3")), "file", "audio.mp3");
+form.Add(new StringContent("apple_music,spotify"), "return");
+form.Add(new StringContent("your-api-token"), "api_token");
+
+var response = await http.PostAsync("https://api.audd.io/", form);
+Console.WriteLine(await response.Content.ReadAsStringAsync());
+```
+
+With the SDK — same call, pass a path:
+
+```csharp
+var result = await audd.RecognizeAsync(
+    "/path/to/audio.mp3",
+    @return: new[] { "apple_music", "spotify" });
+Console.WriteLine($"{result?.Artist} — {result?.Title} {result?.AppleMusic?.Url}");
+```
+
+</details>
+
+<details>
+<summary><strong>Java</strong></summary>
+
+HTTP, no SDK (manual multipart with `java.net.http`):
+
+```java
+var boundary = "----" + UUID.randomUUID();
+var crlf = "\r\n";
+var fileBytes = Files.readAllBytes(Path.of("audio.mp3"));
+
+var head = ("--" + boundary + crlf
+    + "Content-Disposition: form-data; name=\"file\"; filename=\"audio.mp3\"" + crlf
+    + "Content-Type: audio/mpeg" + crlf + crlf).getBytes();
+var tail = (crlf + "--" + boundary + crlf
+    + "Content-Disposition: form-data; name=\"return\"" + crlf + crlf
+    + "apple_music,spotify" + crlf
+    + "--" + boundary + crlf
+    + "Content-Disposition: form-data; name=\"api_token\"" + crlf + crlf
+    + "your-api-token" + crlf
+    + "--" + boundary + "--" + crlf).getBytes();
+
+var body = new ByteArrayOutputStream();
+body.write(head); body.write(fileBytes); body.write(tail);
+
+var req = HttpRequest.newBuilder(URI.create("https://api.audd.io/"))
+    .header("Content-Type", "multipart/form-data; boundary=" + boundary)
+    .POST(BodyPublishers.ofByteArray(body.toByteArray()))
+    .build();
+System.out.println(HttpClient.newHttpClient().send(req, BodyHandlers.ofString()).body());
+```
+
+With the SDK — pass a `Path`:
+
+```java
+import java.nio.file.Path;
+
+var r = audd.recognize(
+    Path.of("audio.mp3"),
+    RecognizeOptions.builder()
+        .returnMetadata("apple_music", "spotify")
+        .build()
+);
+System.out.println(r.artist() + " — " + r.title());
+```
+
+</details>
+
+<details>
+<summary><strong>C</strong></summary>
+
+HTTP, no SDK (libcurl mime):
+
+```c
+CURL *c = curl_easy_init();
+curl_easy_setopt(c, CURLOPT_URL, "https://api.audd.io/");
+
+curl_mime *form = curl_mime_init(c);
+curl_mimepart *p;
+p = curl_mime_addpart(form); curl_mime_name(p, "file"); curl_mime_filedata(p, "audio.mp3");
+p = curl_mime_addpart(form); curl_mime_name(p, "return"); curl_mime_data(p, "apple_music,spotify", CURL_ZERO_TERMINATED);
+p = curl_mime_addpart(form); curl_mime_name(p, "api_token"); curl_mime_data(p, "your-api-token", CURL_ZERO_TERMINATED);
+
+curl_easy_setopt(c, CURLOPT_MIMEPOST, form);
+curl_easy_perform(c);
+curl_mime_free(form);
+curl_easy_cleanup(c);
+```
+
+With the SDK — same call, pass a path (auto-detects URL vs path):
+
+```c
+const char *want[] = { "apple_music", "spotify", NULL };
+audd_recognize_options_t opts = { .return_metadata = want };
+audd_recognition_t *r = NULL;
+audd_recognize(client, "/path/to/audio.mp3", &opts, &r);
+```
+
+</details>
+
+<details>
+<summary><strong>C++</strong></summary>
+
+HTTP, no SDK (libcurl mime):
+
+```cpp
+CURL *c = curl_easy_init();
+curl_easy_setopt(c, CURLOPT_URL, "https://api.audd.io/");
+
+curl_mime *form = curl_mime_init(c);
+auto *p = curl_mime_addpart(form);
+curl_mime_name(p, "file");
+curl_mime_filedata(p, "audio.mp3");
+
+for (auto [name, value] : {
+    std::pair{"return", "apple_music,spotify"},
+    std::pair{"api_token", "your-api-token"},
+}) {
+    p = curl_mime_addpart(form);
+    curl_mime_name(p, name);
+    curl_mime_data(p, value, CURL_ZERO_TERMINATED);
+}
+
+curl_easy_setopt(c, CURLOPT_MIMEPOST, form);
+curl_easy_perform(c);
+curl_mime_free(form);
+curl_easy_cleanup(c);
+```
+
+With the SDK — string is auto-classified as URL or path:
+
+```cpp
+audd::RecognizeOptions opts;
+opts.return_metadata = {"apple_music", "spotify"};
+auto result = client.recognize("/path/to/audio.mp3", opts);
 ```
 
 </details>
@@ -597,7 +953,7 @@ const song = await audd.recognize({
     "timecode": "02:32",
     "song_link": "https://lis.tn/Warriors",
     "apple_music": { "url": "https://music.apple.com/...", "previews": [...], "...": "..." },
-    "spotify": { "external_urls": { "spotify": "https://open.spotify.com/..." }, "...": "..." }
+    "spotify": { "uri": "spotify:track:...", "external_urls": { "spotify": "https://open.spotify.com/..." }, "...": "..." }
   }
 }
 ```
@@ -619,8 +975,8 @@ Requests are counted as **1 per 12 seconds of audio**. Use `skip` and `every` to
 | Parameter | Required | Description |
 |---|---|---|
 | `api_token` | ✅ | Your auth token |
-| `url` | one of `url`/`file` | URL of the file (also accepts web pages containing audio/video) |
-| `file` | one of `url`/`file` | File via `multipart/form-data` |
+| `url` | one of `url` / `file` | URL of the file (also accepts web pages containing audio/video) |
+| `file` | one of `url` / `file` | File via `multipart/form-data` |
 | `accurate_offsets` | | `"true"` for precise start/end offsets |
 | `skip` | | Number of 12s chunks to skip after each scanned chunk |
 | `every` | | Number of consecutive chunks to scan |
@@ -658,7 +1014,7 @@ for chunk in r.get("result", []):
         print(f"[{chunk['offset']}] {song['artist']} — {song['title']} (score: {song['score']})")
 ```
 
-With the [audd-python](https://github.com/AudDMusic/audd-python) SDK:
+With the SDK:
 
 ```python
 for match in audd.recognize_enterprise(
@@ -691,15 +1047,15 @@ for (const chunk of r.result ?? []) {
 }
 ```
 
-With the [audd-node](https://github.com/AudDMusic/audd-node) SDK:
+With the SDK:
 
 ```typescript
-for await (const match of audd.recognizeEnterprise({
-  url: "https://audd.tech/djatwork_example.mp3",
-  accurateOffsets: true,
-  limit: 1,
-})) {
-  console.log(`[${match.offset}] ${match.artist} — ${match.title}`);
+const matches = await audd.recognizeEnterprise(
+  "https://audd.tech/djatwork_example.mp3",
+  { accurateOffsets: true, limit: 1 },
+);
+for (const m of matches) {
+  console.log(`[${m.offset}] ${m.artist} — ${m.title}`);
 }
 ```
 
@@ -811,7 +1167,7 @@ Get `longpoll_category` from `/getStreams/`. Or embed a live now-playing widget:
 https://widget.audd.tech/?ch=-[longpoll_category]&background&history&shadow
 ```
 
-Every official SDK exposes a longpoll consumer that handles the timestamp bookkeeping for you — see the per-SDK docs.
+Every official SDK exposes a longpoll consumer that handles the timestamp bookkeeping for you — see the [per-SDK docs](https://docs.audd.io/sdks/).
 
 ---
 
@@ -842,8 +1198,7 @@ Full error catalog at [docs.audd.io](https://docs.audd.io/).
 ## Tips
 
 - **Audio length:** the standard endpoint works best with 5–12 seconds of audio.
-- **Prefer `url` over `file`:** server-side download is faster and avoids upload size limits.
-- **Provider links:** specify `return=apple_music,spotify,deezer,napster,musicbrainz` to attach those streaming services' track URLs and IDs to the response.
+- **Provider links:** specify `return=apple_music,spotify,deezer,napster,musicbrainz` to attach those services' track URLs and IDs to the response.
 - **Enterprise cost:** use `skip` and `every` to sample long files instead of scanning every chunk; set `limit=1` if you only need one match per chunk.
 
 ---
@@ -852,7 +1207,6 @@ Full error catalog at [docs.audd.io](https://docs.audd.io/).
 
 - [**API dashboard**](https://dashboard.audd.io/) — get your token, manage billing, configure streams
 - [**Full documentation**](https://docs.audd.io/) — complete API reference
-- [**audd-openapi**](https://github.com/AudDMusic/audd-openapi) — OpenAPI 3.1 spec; generate your own client
 - [**audd-chrome-extension**](https://github.com/AudDMusic/audd-chrome-extension) — recognize music in any browser tab
 - [**discord-bot**](https://github.com/AudDMusic/discord-bot) — identify music in Discord channels (Go)
 - [Code examples on GitHub](https://github.com/search?q=%22api.audd.io%22&type=code) — community uses

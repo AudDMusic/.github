@@ -2,7 +2,7 @@
 
 # AudD — Music Recognition API
 
-Identify songs from short audio clips, hours-long broadcasts, and live audio streams.
+Identify songs from short audio clips, hours-long broadcast recordings, and live audio streams.
 
 [**Get an API token**](https://dashboard.audd.io/) · [**Full docs**](https://docs.audd.io/) · [Support](mailto:api@audd.io)
 
@@ -29,8 +29,8 @@ The API is one HTTP POST and works from any HTTP client. Official SDKs are avail
 | Endpoint | Best for | Limits | Response time |
 |---|---|---|---|
 | [`api.audd.io/`](#recognize-a-song) | Single short clip (Shazam-style) | Up to 12s of audio | ~0.1–1.5s |
-| [`enterprise.audd.io/`](#process-long-files-enterprise) | Hours-long mixes, broadcasts, podcasts | Unlimited length | Seconds to minutes |
-| [`api.audd.io/addStream/`](#monitor-live-streams) | Real-time radio / Twitch / YouTube live | Continuous | Real-time |
+| [`enterprise.audd.io/`](#process-long-files-enterprise) | Hours-long mixes, broadcast recordings, podcasts | Unlimited length | Seconds to minutes |
+| [`api.audd.io/addStream/`](#monitor-live-streams) | Live broadcasts, radio, Twitch, YouTube live | Continuous | Real-time |
 
 ---
 

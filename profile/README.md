@@ -84,7 +84,7 @@ if r["status"] == "success" and r["result"]:
     print(s["apple_music"]["url"])
 ```
 
-With the [audd-python](https://github.com/AudDMusic/audd-python) SDK ([docs](https://docs.audd.io/sdks/python)):
+With the SDK ([github](https://github.com/AudDMusic/audd-python), [docs](https://docs.audd.io/sdks/python)):
 
 ```bash
 pip install audd
@@ -126,7 +126,7 @@ if (status === "success" && result) {
 }
 ```
 
-With the [audd-node](https://github.com/AudDMusic/audd-node) SDK ([docs](https://docs.audd.io/sdks/node)):
+With the SDK ([github](https://github.com/AudDMusic/audd-node), [docs](https://docs.audd.io/sdks/node)):
 
 ```bash
 npm install @audd/sdk
@@ -184,7 +184,7 @@ if body.Result != nil {
 }
 ```
 
-With the [audd-go](https://github.com/AudDMusic/audd-go) SDK ([docs](https://docs.audd.io/sdks/go)):
+With the SDK ([github](https://github.com/AudDMusic/audd-go), [docs](https://docs.audd.io/sdks/go)):
 
 ```bash
 go get github.com/AudDMusic/audd-go
@@ -229,7 +229,7 @@ if let Some(s) = r["result"].as_object() {
 }
 ```
 
-With the [audd-rust](https://github.com/AudDMusic/audd-rust) SDK ([docs](https://docs.audd.io/sdks/rust)):
+With the SDK ([github](https://github.com/AudDMusic/audd-rust), [docs](https://docs.audd.io/sdks/rust)):
 
 ```bash
 cargo add audd
@@ -279,7 +279,7 @@ if ($r['status'] === 'success' && $r['result']) {
 }
 ```
 
-With the [audd-php](https://github.com/AudDMusic/audd-php) SDK ([docs](https://docs.audd.io/sdks/php)):
+With the SDK ([github](https://github.com/AudDMusic/audd-php), [docs](https://docs.audd.io/sdks/php)):
 
 ```bash
 composer require audd/audd
@@ -319,7 +319,7 @@ if let result = json?["result"] as? [String: Any] {
 }
 ```
 
-With the [audd-swift](https://github.com/AudDMusic/audd-swift) SDK ([docs](https://docs.audd.io/sdks/swift)):
+With the SDK ([github](https://github.com/AudDMusic/audd-swift), [docs](https://docs.audd.io/sdks/swift)):
 
 ```swift
 // Package.swift: .package(url: "https://github.com/AudDMusic/audd-swift", from: "1.0.0")
@@ -356,7 +356,7 @@ val response = OkHttpClient().newCall(
 println(response.body?.string())
 ```
 
-With the [audd-kotlin](https://github.com/AudDMusic/audd-kotlin) SDK ([docs](https://docs.audd.io/sdks/kotlin)):
+With the SDK ([github](https://github.com/AudDMusic/audd-kotlin), [docs](https://docs.audd.io/sdks/kotlin)):
 
 ```kotlin
 // Gradle: implementation("io.audd:audd-kotlin:1.0.0")
@@ -392,7 +392,7 @@ var response = await http.PostAsync("https://api.audd.io/", content);
 Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 
-With the [audd-dotnet](https://github.com/AudDMusic/audd-dotnet) SDK ([docs](https://docs.audd.io/sdks/dotnet)):
+With the SDK ([github](https://github.com/AudDMusic/audd-dotnet), [docs](https://docs.audd.io/sdks/dotnet)):
 
 ```bash
 dotnet add package AudD
@@ -428,7 +428,7 @@ var req = HttpRequest.newBuilder(URI.create("https://api.audd.io/"))
 System.out.println(client.send(req, BodyHandlers.ofString()).body());
 ```
 
-With the [audd-java](https://github.com/AudDMusic/audd-java) SDK ([docs](https://docs.audd.io/sdks/java)):
+With the SDK ([github](https://github.com/AudDMusic/audd-java), [docs](https://docs.audd.io/sdks/java)):
 
 ```xml
 <!-- Maven -->
@@ -467,7 +467,7 @@ curl_easy_perform(c);  /* response goes to stdout by default */
 curl_easy_cleanup(c);
 ```
 
-With the [audd-c](https://github.com/AudDMusic/audd-c) SDK ([docs](https://docs.audd.io/sdks/c)):
+With the SDK ([github](https://github.com/AudDMusic/audd-c), [docs](https://docs.audd.io/sdks/c)):
 
 ```cmake
 # CMake
@@ -510,7 +510,7 @@ curl_easy_perform(c);
 curl_easy_cleanup(c);
 ```
 
-With the [audd-cpp](https://github.com/AudDMusic/audd-cpp) SDK ([docs](https://docs.audd.io/sdks/cpp)):
+With the SDK ([github](https://github.com/AudDMusic/audd-cpp), [docs](https://docs.audd.io/sdks/cpp)):
 
 ```cmake
 # CMake
@@ -570,7 +570,7 @@ if r["status"] == "success" and r["result"]:
     print(s["apple_music"]["url"])
 ```
 
-With the SDK — same `recognize()` call, pass a path:
+With the SDK ([github](https://github.com/AudDMusic/audd-python), [docs](https://docs.audd.io/sdks/python)):
 
 ```python
 result = audd.recognize("audio.mp3", return_=["apple_music", "spotify"])
@@ -601,7 +601,7 @@ if (status === "success" && result) {
 }
 ```
 
-With the SDK:
+With the SDK ([github](https://github.com/AudDMusic/audd-node), [docs](https://docs.audd.io/sdks/node)):
 
 ```typescript
 const song = await audd.recognize("./audio.mp3", {
@@ -642,7 +642,7 @@ defer resp.Body.Close()
 // parse resp.Body as JSON, same shape as the URL example
 ```
 
-With the SDK — same call, pass a path:
+With the SDK ([github](https://github.com/AudDMusic/audd-go), [docs](https://docs.audd.io/sdks/go)):
 
 ```go
 result, _ := client.Recognize("/path/to/audio.mp3", &audd.RecognizeOptions{
@@ -672,7 +672,7 @@ let r: serde_json::Value = reqwest::Client::new()
     .json().await?;
 ```
 
-With the SDK — `recognize_with` accepts `Into<Source>`, so a path string works:
+With the SDK ([github](https://github.com/AudDMusic/audd-rust), [docs](https://docs.audd.io/sdks/rust)):
 
 ```rust
 let return_ = ["apple_music".into(), "spotify".into()];
@@ -711,7 +711,7 @@ if ($r['status'] === 'success' && $r['result']) {
 }
 ```
 
-With the SDK — same call, pass a path:
+With the SDK ([github](https://github.com/AudDMusic/audd-php), [docs](https://docs.audd.io/sdks/php)):
 
 ```php
 $result = $audd->recognize('audio.mp3', return_: ['apple_music', 'spotify']);
@@ -743,7 +743,7 @@ req.setValue("multipart/form-data; boundary=\(boundary)", forHTTPHeaderField: "C
 let (data, _) = try await URLSession.shared.upload(for: req, from: body)
 ```
 
-With the SDK — pass a `.file(URL)`:
+With the SDK ([github](https://github.com/AudDMusic/audd-swift), [docs](https://docs.audd.io/sdks/swift)):
 
 ```swift
 let file = URL(fileURLWithPath: "audio.mp3")
@@ -780,7 +780,7 @@ val response = OkHttpClient().newCall(
 println(response.body?.string())
 ```
 
-With the SDK — pass a `Source.FilePath`:
+With the SDK ([github](https://github.com/AudDMusic/audd-kotlin), [docs](https://docs.audd.io/sdks/kotlin)):
 
 ```kotlin
 import io.audd.Source
@@ -810,7 +810,7 @@ var response = await http.PostAsync("https://api.audd.io/", form);
 Console.WriteLine(await response.Content.ReadAsStringAsync());
 ```
 
-With the SDK — same call, pass a path:
+With the SDK ([github](https://github.com/AudDMusic/audd-dotnet), [docs](https://docs.audd.io/sdks/dotnet)):
 
 ```csharp
 var result = await audd.RecognizeAsync(
@@ -852,7 +852,7 @@ var req = HttpRequest.newBuilder(URI.create("https://api.audd.io/"))
 System.out.println(HttpClient.newHttpClient().send(req, BodyHandlers.ofString()).body());
 ```
 
-With the SDK — pass a `Path`:
+With the SDK ([github](https://github.com/AudDMusic/audd-java), [docs](https://docs.audd.io/sdks/java)):
 
 ```java
 import java.nio.file.Path;
@@ -889,7 +889,7 @@ curl_mime_free(form);
 curl_easy_cleanup(c);
 ```
 
-With the SDK — same call, pass a path (auto-detects URL vs path):
+With the SDK ([github](https://github.com/AudDMusic/audd-c), [docs](https://docs.audd.io/sdks/c)):
 
 ```c
 const char *want[] = { "apple_music", "spotify", NULL };
@@ -929,7 +929,7 @@ curl_mime_free(form);
 curl_easy_cleanup(c);
 ```
 
-With the SDK — string is auto-classified as URL or path:
+With the SDK ([github](https://github.com/AudDMusic/audd-cpp), [docs](https://docs.audd.io/sdks/cpp)):
 
 ```cpp
 audd::RecognizeOptions opts;
@@ -1208,7 +1208,8 @@ Full error catalog at [docs.audd.io](https://docs.audd.io/).
 - [**API dashboard**](https://dashboard.audd.io/) — get your token, manage billing, configure streams
 - [**Full documentation**](https://docs.audd.io/) — complete API reference
 - [**audd-chrome-extension**](https://github.com/AudDMusic/audd-chrome-extension) — recognize music in any browser tab
-- [**discord-bot**](https://github.com/AudDMusic/discord-bot) — identify music in Discord channels (Go)
+- [**RedditBot**](https://github.com/AudDMusic/RedditBot) — music recognition bot for Reddit
+- [**DiscordBot**](https://github.com/AudDMusic/DiscordBot) — identify music in Discord channels (Go)
 - [Code examples on GitHub](https://github.com/search?q=%22api.audd.io%22&type=code) — community uses
 
 ---

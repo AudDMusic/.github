@@ -196,9 +196,8 @@ import audd "github.com/AudDMusic/audd-go"
 client := audd.NewClient("your-api-token")
 defer client.Close()
 
-result, err := client.Recognize("https://audd.tech/example.mp3", &audd.RecognizeOptions{
-    Return: []string{"apple_music", "spotify"},
-})
+result, err := client.Recognize("https://audd.tech/example.mp3",
+    audd.Returning("apple_music", "spotify"))
 if err != nil { log.Fatal(err) }
 fmt.Printf("%s — %s\n", result.Artist, result.Title)
 fmt.Println("Apple Music:", result.AppleMusic.URL)
@@ -645,9 +644,8 @@ defer resp.Body.Close()
 With the SDK ([github](https://github.com/AudDMusic/audd-go), [docs](https://docs.audd.io/sdks/go)):
 
 ```go
-result, _ := client.Recognize("/path/to/audio.mp3", &audd.RecognizeOptions{
-    Return: []string{"apple_music", "spotify"},
-})
+result, _ := client.Recognize("/path/to/audio.mp3",
+    audd.Returning("apple_music", "spotify"))
 fmt.Printf("%s — %s\n%s\n", result.Artist, result.Title, result.AppleMusic.URL)
 ```
 

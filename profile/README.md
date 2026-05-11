@@ -197,7 +197,7 @@ client := audd.NewClient("your-api-token")
 defer client.Close()
 
 result, err := client.Recognize("https://audd.tech/example.mp3", &audd.RecognizeOptions{
-    Return: []string{"apple_music", "spotify"},
+    Return: "apple_music,spotify",
 })
 if err != nil { log.Fatal(err) }
 fmt.Printf("%s — %s\n", result.Artist, result.Title)
@@ -646,7 +646,7 @@ With the SDK ([github](https://github.com/AudDMusic/audd-go), [docs](https://doc
 
 ```go
 result, _ := client.Recognize("/path/to/audio.mp3", &audd.RecognizeOptions{
-    Return: []string{"apple_music", "spotify"},
+    Return: "apple_music,spotify",
 })
 fmt.Printf("%s — %s\n%s\n", result.Artist, result.Title, result.AppleMusic.URL)
 ```

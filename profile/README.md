@@ -137,7 +137,7 @@ import { AudD } from "@audd/sdk";
 
 const audd = new AudD("your-api-token");
 const song = await audd.recognize("https://audd.tech/example.mp3", {
-  return: ["apple_music", "spotify"],
+  returnMetadata: ["apple_music", "spotify"],
 });
 if (song) {
   console.log(`${song.artist} — ${song.title}`);
@@ -331,7 +331,7 @@ import AudD
 let audd = try AudD(apiToken: "your-api-token")
 guard let result = try await audd.recognize(
     "https://audd.tech/example.mp3",
-    return: ["apple_music", "spotify"]
+    returnMetadata: ["apple_music", "spotify"]
 ) else { return }
 
 print("\(result.artist ?? "?") — \(result.title ?? "?")")
@@ -608,7 +608,7 @@ With the SDK ([github](https://github.com/AudDMusic/audd-node), [docs](https://d
 
 ```typescript
 const song = await audd.recognize("./audio.mp3", {
-  return: ["apple_music", "spotify"],
+  returnMetadata: ["apple_music", "spotify"],
 });
 if (song) console.log(`${song.artist} — ${song.title}`, song.appleMusic?.url);
 ```
@@ -757,7 +757,7 @@ With the SDK ([github](https://github.com/AudDMusic/audd-swift), [docs](https://
 let file = URL(fileURLWithPath: "audio.mp3")
 guard let result = try await audd.recognize(
     .file(file),
-    return: ["apple_music", "spotify"]
+    returnMetadata: ["apple_music", "spotify"]
 ) else { return }
 
 print("\(result.artist ?? "?") — \(result.title ?? "?")")

@@ -96,7 +96,7 @@ from audd import AudD
 audd = AudD("your-api-token")
 result = audd.recognize(
     "https://audd.tech/example.mp3",
-    return_=["apple_music", "spotify"],
+    return_metadata=["apple_music", "spotify"],
 )
 print(f"{result.artist} — {result.title}")
 print(result.apple_music.url)         # direct Apple Music link
@@ -197,7 +197,7 @@ client := audd.NewClient("your-api-token")
 defer client.Close()
 
 result, err := client.Recognize("https://audd.tech/example.mp3", &audd.RecognizeOptions{
-    Return: "apple_music,spotify",
+    ReturnMetadata: "apple_music,spotify",
 })
 if err != nil { log.Fatal(err) }
 fmt.Printf("%s — %s\n", result.Artist, result.Title)
@@ -236,12 +236,15 @@ cargo add audd
 ```
 
 ```rust
-use audd::AudD;
+use audd::{AudD, RecognizeOptions};
 
 let audd = AudD::new("your-api-token");
-let return_ = ["apple_music".into(), "spotify".into()];
+let return_metadata = ["apple_music".into(), "spotify".into()];
 let Some(r) = audd
-    .recognize_with("https://audd.tech/example.mp3", Some(&return_), None, None)
+    .recognize_with(
+        "https://audd.tech/example.mp3",
+        RecognizeOptions { return_metadata: Some(&return_metadata), ..Default::default() },
+    )
     .await? else { return Ok(()) };
 
 println!("{} — {}", r.artist, r.title);
@@ -291,7 +294,7 @@ use AudD\AudD;
 $audd = new AudD('your-api-token');
 $result = $audd->recognize(
     'https://audd.tech/example.mp3',
-    return_: ['apple_music', 'spotify'],
+    returnMetadata: ['apple_music', 'spotify'],
 );
 echo "{$result->artist} — {$result->title}\n";
 echo $result->apple_music->url, "\n";
@@ -573,7 +576,7 @@ if r["status"] == "success" and r["result"]:
 With the SDK ([github](https://github.com/AudDMusic/audd-python), [docs](https://docs.audd.io/sdks/python)):
 
 ```python
-result = audd.recognize("audio.mp3", return_=["apple_music", "spotify"])
+result = audd.recognize("audio.mp3", return_metadata=["apple_music", "spotify"])
 print(f"{result.artist} — {result.title}")
 print(result.apple_music.url)
 ```
@@ -646,7 +649,7 @@ With the SDK ([github](https://github.com/AudDMusic/audd-go), [docs](https://doc
 
 ```go
 result, _ := client.Recognize("/path/to/audio.mp3", &audd.RecognizeOptions{
-    Return: "apple_music,spotify",
+    ReturnMetadata: "apple_music,spotify",
 })
 fmt.Printf("%s — %s\n%s\n", result.Artist, result.Title, result.AppleMusic.URL)
 ```
@@ -675,9 +678,14 @@ let r: serde_json::Value = reqwest::Client::new()
 With the SDK ([github](https://github.com/AudDMusic/audd-rust), [docs](https://docs.audd.io/sdks/rust)):
 
 ```rust
-let return_ = ["apple_music".into(), "spotify".into()];
+use audd::RecognizeOptions;
+
+let return_metadata = ["apple_music".into(), "spotify".into()];
 if let Some(r) = audd
-    .recognize_with("audio.mp3", Some(&return_), None, None)
+    .recognize_with(
+        "audio.mp3",
+        RecognizeOptions { return_metadata: Some(&return_metadata), ..Default::default() },
+    )
     .await?
 {
     println!("{} — {}", r.artist, r.title);
@@ -714,7 +722,7 @@ if ($r['status'] === 'success' && $r['result']) {
 With the SDK ([github](https://github.com/AudDMusic/audd-php), [docs](https://docs.audd.io/sdks/php)):
 
 ```php
-$result = $audd->recognize('audio.mp3', return_: ['apple_music', 'spotify']);
+$result = $audd->recognize('audio.mp3', return_metadata: ['apple_music', 'spotify']);
 echo "{$result->artist} — {$result->title}\n";
 echo $result->apple_music->url, "\n";
 ```

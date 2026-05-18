@@ -368,7 +368,7 @@ import io.audd.AudD
 val audd = AudD("your-api-token")
 val result = audd.recognize(
     "https://audd.tech/example.mp3",
-    returnExtras = listOf("apple_music", "spotify"),
+    returnMetadata = listOf("apple_music", "spotify"),
 )
 result?.let {
     println("${it.artist} — ${it.title}")
@@ -407,7 +407,7 @@ using AudD;
 await using var audd = new AudD.AudD("your-api-token");
 var result = await audd.RecognizeAsync(
     "https://audd.tech/example.mp3",
-    @return: new[] { "apple_music", "spotify" });
+    returnMetadata: new[] { "apple_music", "spotify" });
 
 Console.WriteLine($"{result?.Artist} — {result?.Title}");
 Console.WriteLine(result?.AppleMusic?.Url);
@@ -795,7 +795,7 @@ import io.audd.Source
 
 val result = audd.recognize(
     Source.FilePath(File("audio.mp3")),
-    returnExtras = listOf("apple_music", "spotify"),
+    returnMetadata = listOf("apple_music", "spotify"),
 )
 result?.let { println("${it.artist} — ${it.title} ${it.appleMusic?.get("url")}") }
 ```
@@ -823,7 +823,7 @@ With the SDK ([github](https://github.com/AudDMusic/audd-dotnet), [docs](https:/
 ```csharp
 var result = await audd.RecognizeAsync(
     "/path/to/audio.mp3",
-    @return: new[] { "apple_music", "spotify" });
+    returnMetadata: new[] { "apple_music", "spotify" });
 Console.WriteLine($"{result?.Artist} — {result?.Title} {result?.AppleMusic?.Url}");
 ```
 

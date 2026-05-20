@@ -28,7 +28,7 @@ The API is one HTTP POST and works from any HTTP client. Official SDKs are avail
 
 | Endpoint | Best for | Limits | Response time |
 |---|---|---|---|
-| [`api.audd.io/`](#recognize-a-song) | Single short clip (Shazam-style) | Up to 12s of audio | ~0.1–1.5s |
+| [`api.audd.io/`](#recognize-a-song) | Single short clip (Shazam-style) | Short audio clip, max 10 MB | ~0.1–1.5s |
 | [`enterprise.audd.io/`](#process-long-files-enterprise) | Hours-long mixes, broadcast recordings, podcasts | Unlimited length | Seconds to minutes |
 | [`api.audd.io/addStream/`](#monitor-live-streams) | Live broadcasts, radio, Twitch, YouTube live | Continuous | Real-time |
 
@@ -1196,7 +1196,7 @@ Access is granted per-account — email [api@audd.io](mailto:api@audd.io) to req
 | `#700` | No file received — check `Content-Type: multipart/form-data` and use `https://` URLs |
 | `#600` | Couldn't download the audio URL |
 | `#500` | Invalid audio file format |
-| `#400` | File too large for `api.audd.io/` (max 10MB / 25s) — use [enterprise](#process-long-files-enterprise) |
+| `#400` | File too large for `api.audd.io/` (max 10 MB) — use [enterprise](#process-long-files-enterprise) |
 | `#300` | Fingerprinting error — clip is likely too short |
 
 Full error catalog at [docs.audd.io](https://docs.audd.io/).
@@ -1205,7 +1205,7 @@ Full error catalog at [docs.audd.io](https://docs.audd.io/).
 
 ## Tips
 
-- **Audio length:** the standard endpoint works best with 5–12 seconds of audio.
+- **Audio length:** the standard endpoint expects a short clip — a few seconds is enough, longer is better than shorter. For files with multiple songs in them, use the enterprise endpoint instead.
 - **Provider links:** specify `return=apple_music,spotify,deezer,napster,musicbrainz` to attach those services' track URLs and IDs to the response.
 - **Enterprise cost:** use `skip` and `every` to sample long files instead of scanning every chunk; set `limit=1` if you only need one match per chunk.
 
